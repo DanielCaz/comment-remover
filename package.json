@@ -22,6 +22,7 @@
       }
     ]
   },
+  "icon": "images/icon.png",
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
