@@ -1,125 +1,138 @@
 import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
-  const removeJavaLikeComments = (text: string) => {
+  const removeJavaLikeComments = () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      vscode.window.showInformationMessage(
+        "Please open a file to remove comments from."
+      );
+      return;
+    }
+
+    const document = editor.document;
+
+    const selection = editor.selection;
+    const text = document.getText(selection);
+
+    if (text === "") {
+      vscode.window.showInformationMessage(
+        "Please select a block of code to remove comments from."
+      );
+      return;
+    }
+
     const singleLineCommentRegex = /\/\/.*$/gm;
     const multiLineCommentRegex = /\/\*[\s\S]*?\*\//gm;
-    return text
+    const newText = text
       .replace(singleLineCommentRegex, "")
       .replace(multiLineCommentRegex, "");
+
+    editor.edit((editBuilder) => {
+      editBuilder.replace(selection, newText);
+    });
   };
 
-  const removePythonLikeComments = (text: string) => {
+  const removePythonLikeComments = () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      vscode.window.showInformationMessage(
+        "Please open a file to remove comments from."
+      );
+      return;
+    }
+
+    const document = editor.document;
+
+    const selection = editor.selection;
+    const text = document.getText(selection);
+
+    if (text === "") {
+      vscode.window.showInformationMessage(
+        "Please select a block of code to remove comments from."
+      );
+      return;
+    }
+
     const singleLineCommentRegex = /#.*$/gm;
-    return text.replace(singleLineCommentRegex, "");
+    const newText = text.replace(singleLineCommentRegex, "");
+
+    editor.edit((editBuilder) => {
+      editBuilder.replace(selection, newText);
+    });
   };
 
-  const removeHTMLLikeComments = (text: string) => {
+  const removeHTMLLikeComments = () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      vscode.window.showInformationMessage(
+        "Please open a file to remove comments from."
+      );
+      return;
+    }
+
+    const document = editor.document;
+
+    const selection = editor.selection;
+    const text = document.getText(selection);
+
+    if (text === "") {
+      vscode.window.showInformationMessage(
+        "Please select a block of code to remove comments from."
+      );
+      return;
+    }
+
     const singleLineCommentRegex = /<!--.*?-->/gm;
-    return text.replace(singleLineCommentRegex, "");
+    const newText = text.replace(singleLineCommentRegex, "");
+
+    editor.edit((editBuilder) => {
+      editBuilder.replace(selection, newText);
+    });
   };
 
-  const hasJavaLikeComments = () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      return false;
-    }
+  const commentRemoverJavaLike = vscode.commands.registerCommand(
+    "comment-remover.removeJavaLikeComments",
+    () => removeJavaLikeComments()
+  );
 
-    const document = editor.document;
-    const languageId = document.languageId;
-    return (
-      languageId === "java" ||
-      languageId === "javascript" ||
-      languageId === "typescript" ||
-      languageId === "javascriptreact" ||
-      languageId === "typescriptreact" ||
-      languageId === "csharp" ||
-      languageId === "c" ||
-      languageId === "cpp" ||
-      languageId === "php" ||
-      languageId === "css" ||
-      languageId === "scss"
-    );
-  };
+  const commentRemoverPythonLike = vscode.commands.registerCommand(
+    "comment-remover.removePythonLikeComments",
+    () => removePythonLikeComments()
+  );
 
-  const hasPythonLikeComments = () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      return false;
-    }
+  const commentRemoverHTMLLike = vscode.commands.registerCommand(
+    "comment-remover.removeHTMLLikeComments",
+    () => removeHTMLLikeComments()
+  );
 
-    const document = editor.document;
-    const languageId = document.languageId;
-    return languageId === "python" || languageId === "yaml";
-  };
+  const commentRemoverMenu = vscode.commands.registerCommand(
+    "comment-remover.removeCommentsMenu",
+    async () => {
+      const commentType = await vscode.window.showQuickPick([
+        "Java-like",
+        "Python-like",
+        "HTML-like",
+      ]);
 
-  const hasHTMLLikeComments = () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      return false;
-    }
-
-    const document = editor.document;
-    const languageId = document.languageId;
-    return (
-      languageId === "html" || languageId === "xml" || languageId === "vue"
-    );
-  };
-
-  const commentRemover = vscode.commands.registerCommand(
-    "comment-remover.removeComments",
-    () => {
-      const editor = vscode.window.activeTextEditor;
-      if (!editor) {
-        vscode.window.showInformationMessage(
-          "Please open a file to remove comments from."
-        );
-        return;
+      switch (commentType) {
+        case "Java-like":
+          removeJavaLikeComments();
+          break;
+        case "Python-like":
+          removePythonLikeComments();
+          break;
+        case "HTML-like":
+          removeHTMLLikeComments();
+          break;
       }
-
-      const document = editor.document;
-
-      const selection = editor.selection;
-      const text = document.getText(selection);
-
-      if (text === "") {
-        vscode.window.showInformationMessage(
-          "Please select a block of code to remove comments from."
-        );
-        return;
-      }
-
-      let newText = "";
-      if (hasJavaLikeComments()) {
-        newText = removeJavaLikeComments(text);
-      } else if (hasPythonLikeComments()) {
-        newText = removePythonLikeComments(text);
-      } else if (hasHTMLLikeComments()) {
-        newText = removeHTMLLikeComments(text);
-      } else {
-        const actions = vscode.window.showInformationMessage(
-          "This language is not supported.",
-          "Request language support"
-        );
-        actions.then((value) => {
-          if (value === "Request language support") {
-            vscode.env.openExternal(
-              vscode.Uri.parse(
-                "https://github.com/DanielCaz/comment-remover/issues"
-              )
-            );
-          }
-        });
-        return;
-      }
-
-      editor.edit((editBuilder) => {
-        editBuilder.replace(selection, newText);
-      });
     }
   );
 
-  context.subscriptions.push(commentRemover);
+  context.subscriptions.push(commentRemoverJavaLike);
+  context.subscriptions.push(commentRemoverPythonLike);
+  context.subscriptions.push(commentRemoverHTMLLike);
+  context.subscriptions.push(commentRemoverMenu);
 }
 
 export function deactivate() {}

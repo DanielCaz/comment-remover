@@ -1,30 +1,38 @@
 # Comment Remover
 
-Removes all comments from selected text. Feel free to [request](https://github.com/DanielCaz/comment-remover/issues) support for your favorite language :)
+Removes all comments from selected text.
 
 ## Features
 
-Supports Java like comments:
+It can remove different style of comments.
 
-- Java
-- JavaScript/TypeScript
-- React
-- C/C#/C++
-- PHP
-- CSS/Sass
+Java-like comments:
 
-Python like comments:
+```java
+// single line
 
-- Python
-- Yaml
+/*
+Multi line
+*/
+```
 
-HTML like comments:
+Python-like comments:
 
-- HTML
-- XML
-- VUE
+```python
+# Single line
+```
+
+HTML-like comments:
+
+```html
+<!-- Multi line -->
+```
 
 ## Release Notes
+
+### 1.0.2
+
+Made extension more general
 
 ### 1.0.1
 

@@ -2,7 +2,7 @@
   "name": "comment-remover",
   "displayName": "Comment Remover",
   "description": "Removes all comments from selected text.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -11,16 +11,38 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:comment-remover.removeComments"
+    "onCommand:comment-remover.removeJavaLikeComments",
+    "onCommand:comment-remover.removePythonLikeComments",
+    "onCommand:comment-remover.removeHTMLLikeComments",
+    "onCommand:comment-remover.removeCommentsMenu"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "comment-remover.removeComments",
+        "command": "comment-remover.removeJavaLikeComments",
+        "title": "Remove Java Like Comments"
+      },
+      {
+        "command": "comment-remover.removePythonLikeComments",
+        "title": "Remove Python Like Comments"
+      },
+      {
+        "command": "comment-remover.removeHTMLLikeComments",
+        "title": "Remove HTML Like Comments"
+      },
+      {
+        "command": "comment-remover.removeCommentsMenu",
         "title": "Remove Comments"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "comment-remover.removeCommentsMenu"
+        }
+      ]
+    }
   },
   "icon": "images/icon.png",
   "scripts": {
